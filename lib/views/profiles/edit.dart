@@ -44,7 +44,9 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
   void initState() {
     super.initState();
     final initialLabel = widget.profile.label;
-    final match = RegExp(r'^[\[【\(@](.*?)[\]】\)]\s*(.*)$').firstMatch(initialLabel);
+    final match = RegExp(
+      r'^[\[【\(@](.*?)[\]】\)]\s*(.*)$',
+    ).firstMatch(initialLabel);
     if (match != null) {
       _folderController = TextEditingController(text: match.group(1));
       _labelController = TextEditingController(text: match.group(2));

@@ -69,7 +69,8 @@ class _ProfileFolderViewState extends ConsumerState<ProfileFolderView> {
     }
 
     // 3. 确保 "未分类" 如果存在则排在最后
-    if (!groups.containsKey('未分类') && widget.profiles.any((p) => extractFolderName(p) == '未分类')) {
+    if (!groups.containsKey('未分类') &&
+        widget.profiles.any((p) => extractFolderName(p) == '未分类')) {
       groups.putIfAbsent('未分类', () => []);
     }
 
@@ -125,7 +126,11 @@ class _ProfileFolderViewState extends ConsumerState<ProfileFolderView> {
         selectAll: true,
       ),
     );
-    if (newName == null || newName.trim().isEmpty || newName.trim() == oldName) return;
+    if (newName == null ||
+        newName.trim().isEmpty ||
+        newName.trim() == oldName) {
+      return;
+    }
     final trimmed = newName.trim();
 
     setState(() {
@@ -185,7 +190,9 @@ class _ProfileFolderViewState extends ConsumerState<ProfileFolderView> {
           final isExpanded = _expandedState[folderName] ?? true;
 
           // 当前选中的活动节点是否位于该文件夹内
-          final hasActiveProfile = folderProfiles.any((p) => p.id == widget.currentProfileId);
+          final hasActiveProfile = folderProfiles.any(
+            (p) => p.id == widget.currentProfileId,
+          );
 
           // 每个文件夹作为一个拖拽接收目标 (DragTarget)
           return DragTarget<Profile>(
@@ -224,14 +231,21 @@ class _ProfileFolderViewState extends ConsumerState<ProfileFolderView> {
                         CommonPopupMenuItem(
                           glyph: AppGlyphs.edit,
                           label: '重命名文件夹',
-                          onPressed: () => _handleRenameFolder(context, folderName, folderProfiles),
+                          onPressed: () => _handleRenameFolder(
+                            context,
+                            folderName,
+                            folderProfiles,
+                          ),
                         ),
                         if (folderName != '未分类')
                           CommonPopupMenuItem(
                             glyph: AppGlyphs.delete,
                             label: '解散文件夹 (移回未分类)',
                             danger: true,
-                            onPressed: () => _handleDissolveFolder(folderName, folderProfiles),
+                            onPressed: () => _handleDissolveFolder(
+                              folderName,
+                              folderProfiles,
+                            ),
                           ),
                       ],
                       child: InkWell(
@@ -241,11 +255,16 @@ class _ProfileFolderViewState extends ConsumerState<ProfileFolderView> {
                           });
                         },
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
                           child: Row(
                             children: [
                               GlyphIcon(
-                                isExpanded ? AppGlyphs.layers : AppGlyphs.appsList,
+                                isExpanded
+                                    ? AppGlyphs.layers
+                                    : AppGlyphs.appsList,
                                 color: isHovered
                                     ? colorScheme.primary
                                     : hasActiveProfile
@@ -273,7 +292,10 @@ class _ProfileFolderViewState extends ConsumerState<ProfileFolderView> {
                                     const SizedBox(width: 8),
                                     // 文件夹药丸徽章：显示数量
                                     Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 7,
+                                        vertical: 2,
+                                      ),
                                       decoration: BoxDecoration(
                                         color: isHovered || hasActiveProfile
                                             ? colorScheme.primaryContainer
@@ -296,7 +318,9 @@ class _ProfileFolderViewState extends ConsumerState<ProfileFolderView> {
                               ),
                               // 折叠指示箭头
                               GlyphIcon(
-                                isExpanded ? AppGlyphs.chevronUp : AppGlyphs.chevronDown,
+                                isExpanded
+                                    ? AppGlyphs.chevronUp
+                                    : AppGlyphs.chevronDown,
                                 color: colorScheme.onSurfaceVariant,
                                 size: 16,
                               ),
@@ -312,13 +336,16 @@ class _ProfileFolderViewState extends ConsumerState<ProfileFolderView> {
                         padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
                         child: folderProfiles.isEmpty
                             ? Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 24),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 24,
+                                ),
                                 child: Center(
                                   child: Text(
                                     '文件夹为空（按住订阅卡片拖拽至此即可归类）',
                                     style: TextStyle(
                                       fontSize: 13,
-                                      color: colorScheme.onSurfaceVariant.withOpacity(0.65),
+                                      color: colorScheme.onSurfaceVariant
+                                          .withOpacity(0.65),
                                     ),
                                   ),
                                 ),
@@ -326,16 +353,19 @@ class _ProfileFolderViewState extends ConsumerState<ProfileFolderView> {
                             : WidthBuilder(
                                 builder: (context, width) {
                                   final columns = _columnsFor(context, width);
+                                  final delegate =
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: columns,
+                                    mainAxisSpacing: widget.spacing,
+                                    crossAxisSpacing: widget.spacing,
+                                    mainAxisExtent: profileItemHeight,
+                                  );
 
                                   return GridView.builder(
                                     shrinkWrap: true,
-                                    physics: const NeverScrollableScrollPhysics(),
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: columns,
-                                      mainAxisSpacing: widget.spacing,
-                                      crossAxisSpacing: widget.spacing,
-                                      mainAxisExtent: profileItemHeight,
-                                    ),
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    gridDelegate: delegate,
                                     itemCount: folderProfiles.length,
                                     itemBuilder: (context, pIndex) {
                                       final profile = folderProfiles[pIndex];
@@ -343,10 +373,16 @@ class _ProfileFolderViewState extends ConsumerState<ProfileFolderView> {
                                       final itemWidget = ProfileItem(
                                         key: ValueKey(profile.id),
                                         profile: profile,
-                                        displayLabel: cleanProfileLabel(profile),
+                                        displayLabel:
+                                            cleanProfileLabel(profile),
                                         groupValue: widget.currentProfileId,
                                         onChanged: (profileId) {
-                                          ref.read(currentProfileIdProvider.notifier).value = profileId;
+                                          ref
+                                              .read(
+                                                currentProfileIdProvider
+                                                    .notifier,
+                                              )
+                                              .value = profileId;
                                         },
                                       );
 
@@ -358,14 +394,22 @@ class _ProfileFolderViewState extends ConsumerState<ProfileFolderView> {
                                           child: Container(
                                             width: 280,
                                             height: profileItemHeight,
-                                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 16,
+                                              vertical: 12,
+                                            ),
                                             decoration: BoxDecoration(
                                               color: colorScheme.surfaceVariant,
-                                              borderRadius: BorderRadius.circular(14),
-                                              border: Border.all(color: colorScheme.primary, width: 2),
+                                              borderRadius:
+                                                  BorderRadius.circular(14),
+                                              border: Border.all(
+                                                color: colorScheme.primary,
+                                                width: 2,
+                                              ),
                                               boxShadow: [
                                                 BoxShadow(
-                                                  color: Colors.black.withOpacity(0.25),
+                                                  color: Colors.black
+                                                      .withOpacity(0.25),
                                                   blurRadius: 16,
                                                   offset: const Offset(0, 6),
                                                 ),
@@ -373,17 +417,24 @@ class _ProfileFolderViewState extends ConsumerState<ProfileFolderView> {
                                             ),
                                             child: Row(
                                               children: [
-                                                GlyphIcon(AppGlyphs.profiles, size: 20, color: colorScheme.primary),
+                                                GlyphIcon(
+                                                  AppGlyphs.profiles,
+                                                  size: 20,
+                                                  color: colorScheme.primary,
+                                                ),
                                                 const SizedBox(width: 10),
                                                 Expanded(
                                                   child: Text(
                                                     cleanProfileLabel(profile),
                                                     style: TextStyle(
                                                       fontSize: 14,
-                                                      fontWeight: FontWeight.bold,
-                                                      color: colorScheme.onSurface,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color:
+                                                          colorScheme.onSurface,
                                                     ),
-                                                    overflow: TextOverflow.ellipsis,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
                                                   ),
                                                 ),
                                               ],
