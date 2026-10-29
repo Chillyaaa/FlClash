@@ -315,13 +315,17 @@ enum DnsOverrideKey with OverrideKey {
   static const normalProfileKeys = {
     listen,
     ipv6,
+    respectRules,
     enhancedMode,
+    fakeIpRange,
     fakeIpFilter,
     fakeIpFilterMode,
     defaultNameserver,
+    nameserverPolicy,
     nameserver,
     fallback,
     proxyServerNameserver,
+    proxyServerNameserverPolicy,
     directNameserver,
   };
 }

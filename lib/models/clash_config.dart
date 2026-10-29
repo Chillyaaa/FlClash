@@ -1323,7 +1323,8 @@ extension DnsOverrideExt on Dns {
     return json;
   }
 
-  /// [keepEmpty] writes emptied keys, but the core refuses an empty nameserver.
+  /// [keepEmpty] writes emptied keys, but the core refuses an empty nameserver
+  /// or an empty proxy-server-nameserver when respect-rules is enabled.
   Map<String, Object?> overrideJson(
     Set<DnsOverrideKey> keys, {
     bool keepEmpty = false,
@@ -1332,7 +1333,10 @@ extension DnsOverrideExt on Dns {
     DnsOverrideKey.values,
     keys,
     keepEmpty: keepEmpty
-        ? keys.difference({DnsOverrideKey.nameserver})
+        ? keys.difference({
+            DnsOverrideKey.nameserver,
+            DnsOverrideKey.proxyServerNameserver,
+          })
         : const <DnsOverrideKey>{},
   );
 

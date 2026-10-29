@@ -85,9 +85,9 @@ class PatchOverrideTarget<K extends OverrideKey, M>
   ConfigLabel get addEntry =>
       (l) => l.addOverrideEntry;
 
-  /// An emptied entry overrides the profile's own value with nothing.
+  /// An emptied entry cancels the override so it falls back to the profile's value.
   @override
-  bool get emptyCancels => false;
+  bool get emptyCancels => true;
 
   @override
   ProviderListenable<T> select<T>(
